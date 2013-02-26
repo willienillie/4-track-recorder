@@ -1,3 +1,6 @@
 html {
     margin-top: 2em; 
 }
+#track-selector {
+    margin: 1em 0;
+}

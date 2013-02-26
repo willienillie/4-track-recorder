@@ -45,6 +45,10 @@
         return audioStream;
     };
 
+    FourTracker.prototype.setTrack = function(number){
+        console.log("track number set to: " + number);
+    };
+
     function failToGetMedia(e){
         console.log("Problem getting audio: ", e);
     } 
