@@ -1,0 +1,3 @@
+[submodule "public/js/recorder"]
+	path = public/js/recorder
+	url = https://github.com/mattdiamond/Recorderjs.git
