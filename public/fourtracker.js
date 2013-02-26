@@ -23,7 +23,7 @@
     };
 
     Track.prototype.stop = function(){
-        if(!this.playback){
+        if(typeof this.playback === "undefined"){
             this.playback.noteOff(0);
         }
     };

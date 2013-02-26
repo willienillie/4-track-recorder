@@ -1,6 +1,10 @@
 html {
     margin-top: 2em; 
 }
-#trackselector {
+#trackselector, #trackvolume {
     margin: 1em 0;
+}
+
+.track-volume {
+    width: 100%;
 }

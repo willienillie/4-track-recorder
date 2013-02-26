@@ -7,22 +7,23 @@ $(function(){
         $("#record").click(function(){
             var btn = $(this);
             if(btn.hasClass(stopClass)){
-                btn.toggleClass(stopClass).find("span").text("Record ");
+                btn.toggleClass(stopClass).find("span").text(" Record");
                 FourTracker.stopRecord();
             }else{
                 FourTracker.startRecord();
-                btn.toggleClass(stopClass).find("span").text("Stop ");
+                btn.toggleClass(stopClass).find("span").text(" Stop");
             }
         });
         $("#play").click(function(){
             var btn = $(this);
             if(btn.hasClass(playClass)){
-                btn.toggleClass(playClass).find("span").text("Play ");
+                btn.toggleClass(playClass).find("span").text(" Play");
                 FourTracker.stopPlay();
             }else{
                 FourTracker.startPlay();
-                btn.toggleClass(playClass).find("span").text("Stop ");
+                btn.toggleClass(playClass).find("span").text(" Stop");
             }
+            btn.find('i').toggleClass('icon-play').toggleClass('icon-stop');
         });
         $(".track-rec").click(toggleRecTrack);
         $(".track-play").click(togglePlayTrack);
