@@ -9,14 +9,18 @@
 <body>
     <div class="container">
         <div class="row-fluid">
-            <div id="record" class="span6 btn"><span>Record </span><i class="icon-plus"></i></div>
-            <div id="play" class="span6 btn"><span>Play </span><i class="icon-play"></i></div>
+            <div id="record" class="span4 btn"><span>Record </span><i class="icon-plus"></i></div>
+            <div data-tracknumber="1" class='track-rec span2 btn btn-danger'><i class="icon-bullhorn icon-white"></i></div>
+            <div data-tracknumber="2" class='track-rec span2 btn'><i class="icon-minus"></i></div>
+            <div data-tracknumber="3" class='track-rec span2 btn'><i class="icon-minus"></i></div>
+            <div data-tracknumber="4" class='track-rec span2 btn'><i class="icon-minus"></i></div>
         </div>
-        <div id="track-selector" class="row-fluid">
-            <div data-tracknumber="1" class='track span3 btn btn-danger'><i class="icon-bullhorn icon-white"></i></div>
-            <div data-tracknumber="2" class='track span3 btn'><i class="icon-minus"></i></div>
-            <div data-tracknumber="3" class='track span3 btn'><i class="icon-minus"></i></div>
-            <div data-tracknumber="4" class='track span3 btn'><i class="icon-minus"></i></div>
+        <div id="trackselector" class="row-fluid">
+            <div id="play" class="span4 btn"><span>Play </span><i class="icon-play"></i></div>
+            <div data-tracknumber="1" class='track-play span2 btn btn-success'>1</div>
+            <div data-tracknumber="2" class='track-play span2 btn btn-success'>2</div>
+            <div data-tracknumber="3" class='track-play span2 btn btn-success'>3</div>
+            <div data-tracknumber="4" class='track-play span2 btn btn-success'>4</div>
         </div>
     </div>
 </body>

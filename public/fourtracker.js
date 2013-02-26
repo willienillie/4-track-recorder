@@ -1,12 +1,39 @@
 (function(window){
-    //15 second track limit which is about 2.5mb
+    var Track = function(input){
+        this.mute = false;
+        this.empty = true;
+        this.recorder = new Recorder(input, {workerPath: '/js/recorder/recorderWorker.js'});
+        this.buffer = null;
+        this.playback;
+    }; 
+
+    Track.prototype.save = function(buffers){
+        var newBuffer = audioContext.createBuffer( 2, buffers[0].length, audioContext.sampleRate );
+        newBuffer.getChannelData(0).set(buffers[0]);
+        newBuffer.getChannelData(1).set(buffers[1]);
+        this.buffer = newBuffer;
+        this.empty = false;
+    }
+
+    Track.prototype.play = function(){
+        this.playback = audioContext.createBufferSource();
+        this.playback.buffer = this.buffer;
+        this.playback.connect( audioContext.destination );
+        this.playback.noteOn(0);     
+    };
+
+    Track.prototype.stop = function(){
+        if(!this.playback){
+            this.playback.noteOff(0);
+        }
+    };
+
+    //15 second track limit which is about 2.5mb for a wav
     var audioContext = null,
-        recorder = null,
+        tracks = [],
         recorderSource = null,
-        input, 
-        microphone,
-        track,
-        sink;
+        selectedTrack = null,
+        four = 4;
 
     function canRecord() {
       return !!(navigator.getUserMedia || navigator.webkitGetUserMedia ||
@@ -20,21 +47,31 @@
 
     FourTracker.prototype.startRecord = function(){
         //eventually choose correct track to record
-        recorder.clear();
-        recorder.record();
+        selectedTrack.recorder.clear();
+        selectedTrack.empty = true;
+        selectedTrack.recorder.record();
     };
 
     FourTracker.prototype.stopRecord = function(){
         //eventually choose correct track to stop recording
-        recorder.stop();
+        selectedTrack.recorder.stop();
+        selectedTrack.recorder.getBuffer(function(buffers){
+            selectedTrack.save(buffers);
+        });
     };
 
     FourTracker.prototype.startPlay = function(){
-        recorder.getBuffer(playback);
+        for(var i = 1; i <= four; i += 1){
+            if(!tracks[i].empty && !tracks[i].mute){
+                tracks[i].play();
+            }
+        }
     };
 
     FourTracker.prototype.stopPlay = function(){
-        playbackSource.stop(0);
+        for(var i = 1; i <= four; i += 1){
+            tracks[i].stop();
+        }
     };
 
     FourTracker.prototype.ok = function(){
@@ -45,8 +82,13 @@
         return audioStream;
     };
 
-    FourTracker.prototype.setTrack = function(number){
+    FourTracker.prototype.setRecordTrack = function(number){
         console.log("track number set to: " + number);
+        selectedTrack = tracks[number];
+    };
+
+    FourTracker.prototype.toggleMuteTrack = function(number){
+        tracks[number].mute = !tracks[number].mute;
     };
 
     function failToGetMedia(e){
@@ -54,22 +96,14 @@
     } 
     
     function startStream(audioStreamIn){
-        input = audioContext.createGainNode();
-
-        microphone = audioContext.createMediaStreamSource(audioStreamIn);
+        var input = audioContext.createGainNode();
+        var microphone = audioContext.createMediaStreamSource(audioStreamIn);
         microphone.connect(input);
-        recorder = new Recorder(input, {workerPath: '/js/recorder/recorderWorker.js'});
+        for(var i = 1; i <= four; i += 1){
+            tracks[i] = new Track(input);
+        }
+        selectedTrack = tracks[1];
     }
-    function playback(buffers){
-        playbackSource = audioContext.createBufferSource();
-        var newBuffer = audioContext.createBuffer( 2, buffers[0].length, audioContext.sampleRate );
-        newBuffer.getChannelData(0).set(buffers[0]);
-        newBuffer.getChannelData(1).set(buffers[1]);
-        playbackSource.buffer = newBuffer;
-
-        playbackSource.connect( audioContext.destination );
-        playbackSource.start(0);     
-    };
 
     window.FourTracker = new FourTracker();
 })(window);

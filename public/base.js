@@ -24,20 +24,26 @@ $(function(){
                 btn.toggleClass(playClass).find("span").text("Stop ");
             }
         });
-        $(".track").click(toggleTrack);
+        $(".track-rec").click(toggleRecTrack);
+        $(".track-play").click(togglePlayTrack);
     }else{
         alert("You ain't got no getUserMedia!");
         document.write("<h1>ain't nobody got time fo dat</h1><img src='http://i0.kym-cdn.com/photos/images/newsfeed/000/284/529/e65.gif'></img>");
     }
 
     //jquery click callbacks
-    function toggleTrack(){
+    function toggleRecTrack(){
         var btn = $(this);
-        $(".track").removeClass('btn-danger').html(
+        $(".track-rec").removeClass('btn-danger').html(
             "<i class='icon-minus'></i>"
         );
         btn.addClass("btn-danger")
             .html('<i class="icon-bullhorn icon-white"></i>');
-        FourTracker.setTrack(btn.data('tracknumber'));
+        FourTracker.setRecordTrack(btn.data('tracknumber'));
+    }
+    function togglePlayTrack(){
+        var btn = $(this);
+        btn.toggleClass('btn-success');
+        FourTracker.toggleMuteTrack(btn.data('tracknumber'));
     }
 });
