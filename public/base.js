@@ -27,6 +27,7 @@ $(function(){
         });
         $(".track-rec").click(toggleRecTrack);
         $(".track-play").click(togglePlayTrack);
+        $(".track-volume").change($.throttle(100,setTrackVolume));
     }else{
         alert("You ain't got no getUserMedia!");
         document.write("<h1>ain't nobody got time fo dat</h1><img src='http://i0.kym-cdn.com/photos/images/newsfeed/000/284/529/e65.gif'></img>");
@@ -46,5 +47,9 @@ $(function(){
         var btn = $(this);
         btn.toggleClass('btn-success');
         FourTracker.toggleMuteTrack(btn.data('tracknumber'));
+    }
+    function setTrackVolume(){
+        var slider = $(this);
+        FourTracker.setTrackVolume(slider.data('tracknumber'),slider.val());
     }
 });

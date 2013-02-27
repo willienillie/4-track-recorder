@@ -5,6 +5,7 @@
         this.recorder = new Recorder(input, {workerPath: '/js/recorder/recorderWorker.js'});
         this.buffer = null;
         this.playback;
+        this.gain;
     }; 
 
     Track.prototype.save = function(buffers){
@@ -17,8 +18,10 @@
 
     Track.prototype.play = function(){
         this.playback = audioContext.createBufferSource();
+        this.gain = audioContext.createGainNode();
         this.playback.buffer = this.buffer;
-        this.playback.connect( audioContext.destination );
+        this.playback.connect( this.gain );
+        this.gain.connect(audioContext.destination);
         this.playback.noteOn(0);     
     };
 
@@ -26,6 +29,10 @@
         if(typeof this.playback === "undefined"){
             this.playback.noteOff(0);
         }
+    };
+    Track.prototype.setVolume = function(level){
+        console.log("My volume adjusted to: " + level);
+        this.volu
     };
 
     //15 second track limit which is about 2.5mb for a wav
@@ -89,6 +96,10 @@
 
     FourTracker.prototype.toggleMuteTrack = function(number){
         tracks[number].mute = !tracks[number].mute;
+    };
+
+    FourTracker.prototype.setTrackVolume = function(number, level){
+        tracks[number].setVolume(level);
     };
 
     function failToGetMedia(e){
