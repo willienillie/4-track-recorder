@@ -2,6 +2,7 @@
     var Track = function(input){
         this.mute = false;
         this.empty = true;
+        this.recording = false;
         this.recorder = new Recorder(input, {workerPath: '/js/recorder/recorderWorker.js'});
         this.buffer = null;
         this.playback;
@@ -26,13 +27,29 @@
     };
 
     Track.prototype.stop = function(){
-        if(typeof this.playback === "undefined"){
-            this.playback.noteOff(0);
+        var me = this;
+        //stop playback
+        if(typeof me.playback !== "undefined"){
+            me.playback.noteOff(0);
+        }
+        //stop recording
+        if(this.recording){
+            me.recording = false;
+            me.recorder.stop();
+            me.recorder.getBuffer(function(buffers){
+                me.save(buffers);
+            });
         }
     };
     Track.prototype.setVolume = function(level){
         console.log("My volume adjusted to: " + level);
-        this.volu
+    };
+
+    Track.prototype.startRecord = function(){
+        this.recording = true;
+        this.recorder.clear();
+        this.empty = true;
+        this.recorder.record();
     };
 
     //15 second track limit which is about 2.5mb for a wav
@@ -40,7 +57,9 @@
         tracks = [],
         recorderSource = null,
         selectedTrack = null,
-        four = 4;
+        four = 4,
+        playing = false,
+        recording = false;
 
     function canRecord() {
       return !!(navigator.getUserMedia || navigator.webkitGetUserMedia ||
@@ -54,30 +73,43 @@
 
     FourTracker.prototype.startRecord = function(){
         //eventually choose correct track to record
-        selectedTrack.recorder.clear();
-        selectedTrack.empty = true;
-        selectedTrack.recorder.record();
+        selectedTrack.startRecord();
     };
 
     FourTracker.prototype.stopRecord = function(){
         //eventually choose correct track to stop recording
-        selectedTrack.recorder.stop();
-        selectedTrack.recorder.getBuffer(function(buffers){
-            selectedTrack.save(buffers);
-        });
+        selectedTrack.stop();
+    };
+
+    FourTracker.prototype.toggleRecord = function(){
+        if(!recording){
+            this.stopRecord();
+        }else{
+            this.startRecord();
+        }
     };
 
     FourTracker.prototype.startPlay = function(){
         for(var i = 1; i <= four; i += 1){
-            if(!tracks[i].empty && !tracks[i].mute){
+            if(!tracks[i].empty && !tracks[i].mute && !tracks[i].recording){
                 tracks[i].play();
             }
         }
+        playing = true;
     };
 
     FourTracker.prototype.stopPlay = function(){
         for(var i = 1; i <= four; i += 1){
             tracks[i].stop();
+        }
+        playing = false;
+    };
+
+    FourTracker.prototype.togglePlay = function(){
+        if(playing){
+            this.stopPlay();
+        }else{
+            this.startPlay();
         }
     };
 

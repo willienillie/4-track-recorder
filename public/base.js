@@ -4,27 +4,8 @@ $(function(){
     //set up new session on server with
     //id for saving audio
     if(FourTracker.ok()){
-        $("#record").click(function(){
-            var btn = $(this);
-            if(btn.hasClass(stopClass)){
-                btn.toggleClass(stopClass).find("span").text(" Record");
-                FourTracker.stopRecord();
-            }else{
-                FourTracker.startRecord();
-                btn.toggleClass(stopClass).find("span").text(" Stop");
-            }
-        });
-        $("#play").click(function(){
-            var btn = $(this);
-            if(btn.hasClass(playClass)){
-                btn.toggleClass(playClass).find("span").text(" Play");
-                FourTracker.stopPlay();
-            }else{
-                FourTracker.startPlay();
-                btn.toggleClass(playClass).find("span").text(" Stop");
-            }
-            btn.find('i').toggleClass('icon-play').toggleClass('icon-stop');
-        });
+        $("#record").click(toggleRec);
+        $("#play").click(togglePlay);
         $(".track-rec").click(toggleRecTrack);
         $(".track-play").click(togglePlayTrack);
         $(".track-volume").change($.throttle(100,setTrackVolume));
@@ -34,6 +15,25 @@ $(function(){
     }
 
     //jquery click callbacks
+    function togglePlay(){
+        togglePlayButton();
+        FourTracker.togglePlay();
+    }
+    function toggleRec(){
+        togglePlayButton();
+        var btn = $("#record");
+        if(btn.hasClass(stopClass)){
+            btn.toggleClass(stopClass).find("span").text(" Record");
+            FourTracker.stopRecord();
+            FourTracker.stopPlay();
+        }else{
+            btn.toggleClass(stopClass).find("span").text(" Stop");
+            //stop play incase we hit play then record to start over
+            FourTracker.stopPlay();
+            FourTracker.startRecord();
+            FourTracker.startPlay();
+        }
+    }
     function toggleRecTrack(){
         var btn = $(this);
         $(".track-rec").removeClass('btn-danger').html(
@@ -51,5 +51,14 @@ $(function(){
     function setTrackVolume(){
         var slider = $(this);
         FourTracker.setTrackVolume(slider.data('tracknumber'),slider.val());
+    }
+    function togglePlayButton(){
+        var btn = $("#play");
+        if(btn.hasClass(playClass)){
+            btn.toggleClass(playClass).find("span").text(" Play");
+        }else{
+            btn.toggleClass(playClass).find("span").text(" Stop");
+        }
+        btn.find('i').toggleClass('icon-play').toggleClass('icon-stop');
     }
 });
