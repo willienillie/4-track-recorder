@@ -6,7 +6,8 @@
         this.recorder = new Recorder(input, {workerPath: '/js/recorder/recorderWorker.js'});
         this.buffer = null;
         this.playback;
-        this.gain;
+        this.gainNode;
+        this.volume = 80;
     }; 
 
     Track.prototype.save = function(buffers){
@@ -19,10 +20,11 @@
 
     Track.prototype.play = function(){
         this.playback = audioContext.createBufferSource();
-        this.gain = audioContext.createGainNode();
+        this.gainNode = audioContext.createGainNode();
         this.playback.buffer = this.buffer;
-        this.playback.connect( this.gain );
-        this.gain.connect(audioContext.destination);
+        this.playback.connect( this.gainNode );
+        this.gainNode.connect(audioContext.destination);
+        this.setVolume(this.volume);
         this.playback.noteOn(0);     
     };
 
@@ -42,7 +44,10 @@
         }
     };
     Track.prototype.setVolume = function(level){
-        console.log("My volume adjusted to: " + level);
+        this.volume = level;
+        var percent = level / 100;
+        var gainRange = this.gainNode.gain.maxValue - this.gainNode.gain.minValue;
+        this.gainNode.gain.value = gainRange * percent;
     };
 
     Track.prototype.startRecord = function(){
