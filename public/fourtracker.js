@@ -122,8 +122,8 @@
         return canRecord();
     };
 
-    FourTracker.prototype.getRawAudio = function(){
-        return audioStream;
+    FourTracker.prototype.getRawAudio = function(callback){
+        tracks[1].recorder.exportWAV(callback);
     };
 
     FourTracker.prototype.setRecordTrack = function(number){
